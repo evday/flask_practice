@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block styles %}
+    {{ super() }}
+    <style>
+    .container{
+        margin-top: 100px;
+    }
+
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container">
+    <table class="table no-right-border table-hover">
+    <thead>
+    <tr>
+        <th>编号</th>
+        <th>书名</th>
+        <th>价格</th>
+        <th>作者</th>
+        <th>出版社</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for book in book_list %}
+    <tr>
+        <td class="active">{{ book.id }}</td>
+        <td class="success">{{ book.title }}</td>
+        <td class="warning">{{ book.price }}</td>
+        <td class="danger">{{ book.author }}</td>
+        <td class="info">{{ book.publish }}</td>
+        <td class="danger">
+            <a href="/edit/{{ book.id }}"><button class="btn btn-success" value="">修改</button></a>
+            <a href="/delete/{{ book.id }}"><button class="btn btn-danger" value="">删除</button></a>
+            <a href="{{ url_for ("main.add_book") }}"><button class="btn btn-info" value="">添加</button></a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    <div class="bs-example text-center">
+                    <nav aria-label="...">
+                        <ul class="pagination">
+                            {{ html|safe }}
+                        </ul>
+                    </nav>
+                </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,10 @@
+.my-navbar a {
+    background: transparent !important;
+    color: #fff !important
+}
+
+.my-navbar a:hover {
+    color: #45bcf9 !important;
+    background: transparent;
+    outline: 0
+}
