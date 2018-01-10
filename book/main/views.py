@@ -13,14 +13,14 @@ from .. import db
 
 
 
-@main.before_request
-def process_request():
-    if request.path  in ["/login","/register"] :
-        return None
-    else:
-        user = session.get("user_info")
-        if not user:
-            return redirect(url_for("main.login"))
+# @main.before_request
+# def process_request():
+#     if request.path  in ["/login","/register"] :
+#         return None
+#     else:
+#         user = session.get("user_info")
+#         if not user:
+#             return redirect(url_for("main.login"))
 
 @main.route ('/login',methods = ["GET","POST"],endpoint = "login")
 def hello_world ():
