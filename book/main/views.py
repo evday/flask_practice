@@ -7,6 +7,7 @@ from flask import flash,redirect,url_for,render_template,request,session
 from .form import RegisterForm,AddBookForm
 from ..models import User,Book
 from .pager import Pagination
+from .pool import SingletonDBPool
 from . import main
 from .. import db
 
@@ -46,8 +47,29 @@ def hello_world ():
             return json.dumps (state)
 @main.route("/register",methods = ["GET","POST"],endpoint = "register")
 def register():
+    # 这是 第三步 实例化RegisterFrom 实例化要执行Form 类的__init__ 方法 在执行 Form 类的__init__方法之前 会执行它父类的__call__方法
+    # 这个RegisterForm 继承FlaskForm--》 Form-->NewBas这个类，而这个类是由FormMeta 创建的 所以 RegisterForm() 这一步会执行FormMeta的__call__
+    # 这个时候__wtforms_meta 和 _unbound_fields 里面就有值了
+    # 然后这里会执行Form 的__init__ 方法
 
+    # 创建这个类 的__call__方法
+            # RegisterForm._unbound_fields 里面,里面已经有值了 是一个列表 [(name,UnboundField对象)]
+            # RegisterForm._wtforms_meta 是一个类 Meta(Meta) 这个类继承了所有的类
+    # 这个类的__new__ 方法
+    # 这个类的__init__ 方法
+            #实例化 Meta --> meta_obj
+            # 在UnboundField 对象调用bind 这个方法的时候对StringField等类进行实例化
+            #self._fields = {
+            #username = StringField()
+            #password = PasswordField()
+    # }
+            # self.name =  StringField()
+            # self.pwd = PasswordField()
+    # 这里用了两遍才将StringField 类实例化 为什么呢
+    # 这里相当于做了一次缓存，在实例化Form 的时候 先将数据查找了一遍RegisterForm._unbound_fields ，如果有值的时候就不用再找了
     form = RegisterForm()
+
+
     if form.validate_on_submit():
         try:
             user = User(username = form.username.data,password = form.password.data)
@@ -68,7 +90,16 @@ def logout():
 @main.route('/book',methods = ["GET"],endpoint = "book")
 def book():
 
-    book_list = Book.query.all ()
+    pool = SingletonDBPool()
+    conn = pool.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM book;")
+    book_list = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # book_list = Book.query.all ()
     pager_obj = Pagination (request.args.get ('page',1),len (book_list),request.path,request.args)
     host_list = book_list [pager_obj.start:pager_obj.end]
     html = pager_obj.page_html ()

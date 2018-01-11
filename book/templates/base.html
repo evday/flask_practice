@@ -20,8 +20,8 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    {% if session.user_info %}
-                        <li><a href=""><span class="glyphicon glyphicon-user">&#8195;{{ session.user_info }}</span></a>
+                    {% if current_user %}
+                        <li><a href=""><span class="glyphicon glyphicon-user">&#8195;{{ current_user }}</span></a>
                         </li>
                         <li><a href="{{ url_for ("main.logout") }}"><span>注销</span></a></li>
                     {% else %}
